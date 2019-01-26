@@ -1,14 +1,16 @@
+#Alpha Vantage! Your API key is: AR7YDO4OYCHEAZBA
 import tweepy
-import csv
 import numpy as np
+import requests
+import json
 import matplotlib.pyplot as plt
 from textblob import TextBlob
 from sklearn.svm import SVR
 plt.switch_backend('TkAgg')
 consumer_key= 'mupucnuirYgcDUcdoWnbKI5Sj'
 consumer_secret= 'bOkWp3ysvnlr3Zw9bzFNPTVK0TijLSbFaU9MKrWUZSRJ9wIxLN'
-access_token='812697466990641152-nYSiwMkz62iY61s9s5hnngO1s1xOD1h'
-access_token_secret='fPx4r3x9Uegt1vaA8sIEg7DaFHJUEPkZvtulNwDvmGMHF'
+access_token='812697466990641152-qO3nshDugAhzCu2e8wihgUYnc5ricqC'
+access_token_secret='edXnxrMcjJOJgS8biXrAprAxUCNM5nhiUJUT7C3dsac2U'
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
@@ -32,29 +34,32 @@ else:
 
 dates = []
 prices = []
-def get_data(filename):
-    with open(filename, 'r') as csvfile:
-        csv_file_reader = csv.reader(csvfile)
-        next(csv_file_reader)
-        for row in csv_file_reader:
-            dates.append(int(row[0].split('-')[2]))
-            prices.append(float(row[1]))
-    return
+input_CN = 'GOOG 27'
+input_Date = input_CN.split(' ')[1]
+input_CN = input_CN.split(' ')[0]
 
 def predict_prices(dates, prices, x):
+    r = requests.get('https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol='+str(input_CN)+'&apikey=AR7YDO4OYCHEAZBA')
+    response_dict = r.json()
+    print (response_dict)
+    response_dict_improved = response_dict["Monthly Time Series"]
+    for var in response_dict_improved:
+        price_json = response_dict_improved.get(var).get('1. open')
+        dates.append(var.split('-')[1]*31+var.split('-')[2])
+        dates.append(price_json)
     dates = np.reshape(dates,(-1, 1))
     svr_rbf = SVR(kernel='rbf', C=1e3, gamma=0.1)
-    svr_rbf.fit(dates, prices)
+    print(dates)
+    svr_rbf.fit(dates, price_json)
     plt.scatter(dates, prices, color='orange', label='Data')
     plt.plot(dates, svr_rbf.predict(dates), color='red', label='RBF model')
     plt.xlabel('Date')
     plt.ylabel('Price')
-    plt.title('American Airlines Stock')
+    plt.title('Company Stock')
     plt.legend()
-    return svr_rbf.predict([[x]])[0]
     plt.show()
-get_data('AAL.csv')
+    return svr_rbf.predict([[x]])[0]
 
 #predicted_price = predict_prices(dates, prices, 14)
 
-print (predict_prices(dates, prices,12))# the number is the date of which you wanna predict
+print (predict_prices(dates, prices,input_Date))# the number is the date of which you wanna predict
