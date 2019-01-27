@@ -14,11 +14,6 @@ access_token_secret='edXnxrMcjJOJgS8biXrAprAxUCNM5nhiUJUT7C3dsac2U'
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
-dates = []
-prices = []
-input_CN = input()
-input_Date = input_CN.split(' ')[1]
-input_CN = input_CN.split(' ')[0]
 public_tweets = api.search('Google')
 
 threshold=0
@@ -35,8 +30,11 @@ if pos_sent_tweet>neg_sent_tweet:
 else:
     print ("Overall Neg")
 
-def predict_prices(dates,prices,x):
-    r = requests.get('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol='+str(input_CN)+'&apikey=AR7YDO4OYCHEAZBA')
+
+def predict_prices(symbol, date):
+    dates = []
+    prices = []
+    r = requests.get('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol='+symbol+'&apikey=AR7YDO4OYCHEAZBA')
     response_dict = r.json()
     response_dict_improved = response_dict["Time Series (Daily)"]
     for var in response_dict_improved:
@@ -46,6 +44,7 @@ def predict_prices(dates,prices,x):
     dates = np.reshape(dates,(-1, 1))
     svr_rbf = SVR(kernel='rbf', C=1e3, gamma=0.1)
     svr_rbf.fit(dates, prices)
+    '''
     plt.scatter(dates, prices, color='orange', label='Data')
     plt.plot(dates, svr_rbf.predict(dates), color='red', label='RBF model')
     plt.xlabel('Date')
@@ -53,8 +52,5 @@ def predict_prices(dates,prices,x):
     plt.title('Company Stock')
     plt.legend()
     plt.show()
-    return svr_rbf.predict([[x]])[0]
-
-#predicted_price = predict_prices(dates, prices, 14)
-
-print (predict_prices(dates,prices,input_Date))# the number is the date of which you wanna predict
+    '''
+    return svr_rbf.predict([[date]])[0]
