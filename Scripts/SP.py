@@ -14,9 +14,12 @@ access_token_secret='edXnxrMcjJOJgS8biXrAprAxUCNM5nhiUJUT7C3dsac2U'
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
-
-public_tweets = api.search('American Airlines')
-print (public_tweets[2].text)
+dates = []
+prices = []
+input_CN = input()
+input_Date = input_CN.split(' ')[1]
+input_CN = input_CN.split(' ')[0]
+public_tweets = api.search('Google')
 
 threshold=0
 pos_sent_tweet=0
@@ -32,25 +35,17 @@ if pos_sent_tweet>neg_sent_tweet:
 else:
     print ("Overall Neg")
 
-dates = []
-prices = []
-input_CN = 'GOOG 27'
-input_Date = input_CN.split(' ')[1]
-input_CN = input_CN.split(' ')[0]
-
-def predict_prices(dates, prices, x):
-    r = requests.get('https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol='+str(input_CN)+'&apikey=AR7YDO4OYCHEAZBA')
+def predict_prices(dates,prices,x):
+    r = requests.get('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol='+str(input_CN)+'&apikey=AR7YDO4OYCHEAZBA')
     response_dict = r.json()
-    print (response_dict)
-    response_dict_improved = response_dict["Monthly Time Series"]
+    response_dict_improved = response_dict["Time Series (Daily)"]
     for var in response_dict_improved:
         price_json = response_dict_improved.get(var).get('1. open')
-        dates.append(var.split('-')[1]*31+var.split('-')[2])
-        dates.append(price_json)
+        dates.append((int(var.split('-')[1])*31)+int(var.split('-')[2]))
+        prices.append(price_json)
     dates = np.reshape(dates,(-1, 1))
     svr_rbf = SVR(kernel='rbf', C=1e3, gamma=0.1)
-    print(dates)
-    svr_rbf.fit(dates, price_json)
+    svr_rbf.fit(dates, prices)
     plt.scatter(dates, prices, color='orange', label='Data')
     plt.plot(dates, svr_rbf.predict(dates), color='red', label='RBF model')
     plt.xlabel('Date')
@@ -62,4 +57,4 @@ def predict_prices(dates, prices, x):
 
 #predicted_price = predict_prices(dates, prices, 14)
 
-print (predict_prices(dates, prices,input_Date))# the number is the date of which you wanna predict
+print (predict_prices(dates,prices,input_Date))# the number is the date of which you wanna predict
