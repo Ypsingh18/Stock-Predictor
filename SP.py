@@ -21,7 +21,7 @@ pos_sent_tweet=0
 neg_sent_tweet=0
 for tweet in public_tweets:
     analysis=TextBlob(tweet.text)
-    if analysis.sentiment.polarity>=threshold:
+    if analysis.sentiment.polarity >= threshold:
         pos_sent_tweet=pos_sent_tweet+1
     else:
         neg_sent_tweet=neg_sent_tweet+1
@@ -51,10 +51,11 @@ def predict_prices(symbol, date):
         price_json = response_dict_improved.get(key_date).get('1. open')
         dates.append(date_to_int(key_date))
         prices.append(price_json)
-    dates = np.reshape(dates,(-1, 1))
+    dates = np.reshape(dates, (-1, 1))
     svr_rbf = SVR(kernel='rbf', C=1e3, gamma=0.1)
     svr_rbf.fit(dates, prices)
     '''
+    # Plotting is not necessary in production
     plt.scatter(dates, prices, color='orange', label='Data')
     plt.plot(dates, svr_rbf.predict(dates), color='red', label='RBF model')
     plt.xlabel('Date')
@@ -63,4 +64,4 @@ def predict_prices(symbol, date):
     plt.legend()
     plt.show()
     '''
-    return svr_rbf.predict([[date]])[0]
+    return svr_rbf.predict([[date]])[0], (dates, prices)
