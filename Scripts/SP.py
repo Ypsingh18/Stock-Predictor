@@ -31,15 +31,25 @@ else:
     print ("Overall Neg")
 
 
+# given a date in the format YYYY-MM-DD,
+# returns the number of days since January 1, 0000 -ish
+def date_to_int(date):
+    year = int(date.split('-')[0])
+    month = int(date.split('-')[1])
+    day = int(date.split('-')[2])
+
+    return (year - 1) * 366 + (month - 1) * 31 + day
+
+
 def predict_prices(symbol, date):
     dates = []
     prices = []
     r = requests.get('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol='+symbol+'&apikey=AR7YDO4OYCHEAZBA')
     response_dict = r.json()
     response_dict_improved = response_dict["Time Series (Daily)"]
-    for var in response_dict_improved:
-        price_json = response_dict_improved.get(var).get('1. open')
-        dates.append((int(var.split('-')[1])*31)+int(var.split('-')[2]))
+    for key_date in response_dict_improved:
+        price_json = response_dict_improved.get(key_date).get('1. open')
+        dates.append(date_to_int(key_date))
         prices.append(price_json)
     dates = np.reshape(dates,(-1, 1))
     svr_rbf = SVR(kernel='rbf', C=1e3, gamma=0.1)
