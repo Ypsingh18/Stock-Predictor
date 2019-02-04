@@ -1,4 +1,3 @@
-#Alpha Vantage! Your API key is: AR7YDO4OYCHEAZBA
 import tweepy
 import numpy as np
 import requests
@@ -7,10 +6,10 @@ import matplotlib.pyplot as plt
 from textblob import TextBlob
 from sklearn.svm import SVR
 plt.switch_backend('TkAgg')
-consumer_key= 'mupucnuirYgcDUcdoWnbKI5Sj'
-consumer_secret= 'bOkWp3ysvnlr3Zw9bzFNPTVK0TijLSbFaU9MKrWUZSRJ9wIxLN'
-access_token='812697466990641152-qO3nshDugAhzCu2e8wihgUYnc5ricqC'
-access_token_secret='edXnxrMcjJOJgS8biXrAprAxUCNM5nhiUJUT7C3dsac2U'
+consumer_key= 'Enter your consumer key from twitter'
+consumer_secret= 'Enter your consumer secret from twitter'
+access_token='Enter your access token from twitter'
+access_token_secret='Enter your access token secret from twitter'
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
@@ -44,7 +43,7 @@ def date_to_int(date):
 def predict_prices(symbol, date):
     dates = []
     prices = []
-    r = requests.get('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol='+symbol+'&apikey=AR7YDO4OYCHEAZBA')
+    r = requests.get('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol='+symbol+'&apikey=Enter your alpha vantage key')
     response_dict = r.json()
     response_dict_improved = response_dict["Time Series (Daily)"]
     for key_date in response_dict_improved:
