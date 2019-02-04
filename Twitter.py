@@ -4,11 +4,10 @@ from textblob import TextBlob
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
-consumer_key= 'mupucnuirYgcDUcdoWnbKI5Sj'
-consumer_secret= 'bOkWp3ysvnlr3Zw9bzFNPTVK0TijLSbFaU9MKrWUZSRJ9wIxLN'
-access_token='812697466990641152-qO3nshDugAhzCu2e8wihgUYnc5ricqC'
-access_token_secret='edXnxrMcjJOJgS8biXrAprAxUCNM5nhiUJUT7C3dsac2U'
-
+consumer_key= 'Enter your consumer key from twitter'
+consumer_secret= 'Enter your consumer secret from twitter'
+access_token='Enter your access token from twitter'
+access_token_secret='Enter your access token secret from twitter'
 
 # This is a basic listener that just prints received tweets to stdout.
 class StdOutListener(StreamListener):
